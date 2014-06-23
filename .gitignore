@@ -1,0 +1,7 @@
+vendor/
+tags
+cscope.out
+build/
+composer.lock
+coverage.clover
+ocular.phar
