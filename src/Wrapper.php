@@ -5,8 +5,6 @@ use Thrift\Exception\TException;
 
 class Wrapper
 {
-    private static $debug = false;
-
     private $clients = null;
     private $service = '';
     private $cacher = null;
