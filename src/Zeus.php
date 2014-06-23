@@ -1,6 +1,8 @@
 <?php
 namespace Eleme\Zeus;
 
+use Closure;
+
 class Zeus
 {
     public static $clients = null;
@@ -9,7 +11,8 @@ class Zeus
 
     public static function factory($service, $class = null)
     {
-        return new Wrapper(static::getClients(), $service, $cacher, $timer, $class ?: get_called_class());
+        $class = $class ?: get_called_class();
+        return new Wrapper(static::getClients(), $service, static::getCacher(), static::getTimer(), $class);
     }
 
     public static function setTimer($timer)

@@ -139,7 +139,7 @@ class Wrapper
 
     private function doRun()
     {
-        $client = $this->clients->connect([$this->service]);
+        $client = $this->clients[$this->service];
 
         if (!is_callable(array($client, $this->method))) {
             throw new \Exception("Method ".get_class($client).'::'.$this->method.' is not callable!');
