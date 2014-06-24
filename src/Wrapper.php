@@ -7,22 +7,23 @@ class Wrapper
 {
     private $clients = null;
     private $service = '';
+
     private $cacher = null;
     private $timer = null;
-
+    private $logger = null;
+    private $authorizations = array();
     private $class = '';
+
     private $method = '';
     private $handler = null;
     private $args = [];
     private $ttl = 0;
 
-    public function __construct($clients, $service, $cacher = null, $timer = null, $class = null)
+    public function __construct($clients, $service, array $options = array())
     {
         $this->clients = $clients;
         $this->service = $service;
-        $this->cacher = $cacher;
-        $this->timer = $timer;
-        $this->class = $class;
+        $this->init($options);
     }
 
     public function get($default = null)
@@ -154,6 +155,8 @@ class Wrapper
             $timer->stop($name);
         }
 
+        $this->log();
+
         return $result;
     }
 
@@ -190,5 +193,25 @@ class Wrapper
     private function getCacheKey()
     {
         return md5(sprintf('web.%s.%s.%s', $this->service, $this->method, json_encode($this->args)));
+    }
+
+    private function log()
+    {
+        if (!$this->logger) {
+            return;
+        }
+        if (in_array($this->method, $this->authorizations) !== false) {
+            $args = array_slice($this->args, 0, count($this->args) - 1);
+        } else {
+            $args = $this->args;
+        }
+        $this->logger->info($this->service.'::'.$this->method, $args);
+    }
+
+    private function init(array $options)
+    {
+        foreach ($options as $key => $option) {
+            $this->$key = $option;
+        }
     }
 }

@@ -8,11 +8,37 @@ class Zeus
     public static $clients = null;
     public static $cacher = null;
     public static $timer = null;
+    public static $logger = null;
+    public static $authorizations = array();
 
     public static function factory($service, $class = null)
     {
-        $class = $class ?: get_called_class();
-        return new Wrapper(static::getClients(), $service, static::getCacher(), static::getTimer(), $class);
+        $options = array(
+            'cacher' => static::getCacher(),
+            'timer' => static::getTimer(),
+            'logger' => static::getLogger(),
+            'authorizations' => static::$authorizations,
+            'class' => $class ?: get_called_class(),
+        );
+        return new Wrapper(static::getClients(), $service, $options);
+    }
+
+    public static function setAuthorizations(array $authorizations)
+    {
+        static::$authorizations = $authorizations;
+    }
+
+    public static function setLogger($logger)
+    {
+        static::$logger = $logger;
+    }
+
+    public static function getLogger()
+    {
+        if (static::$logger instanceof Closure) {
+            static::$logger = call_user_func(static::$logger);
+        }
+        return static::$logger;
     }
 
     public static function setTimer($timer)

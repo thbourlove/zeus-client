@@ -12,6 +12,7 @@ class ZeusServiceProvider implements ServiceProviderInterface
         $app['zeus'] = $app->share(function ($app) {
             return new Zeus();
         });
+        $app['zeus.authorizations'] = array();
     }
 
     public function boot(Application $app)
@@ -22,8 +23,12 @@ class ZeusServiceProvider implements ServiceProviderInterface
         Zeus::setTimer(function () use ($app) {
             return $app['timer.collections']['zeus'];
         });
+        Zeus::setLogger(function () use ($app) {
+            return $app['loggers']['zeus'];
+        });
         Zeus::setCacher(function () use ($app) {
             return $app['cacher'];
         });
+        Zeus::setAuthorizations($app['zeus.authorizations']);
     }
 }
