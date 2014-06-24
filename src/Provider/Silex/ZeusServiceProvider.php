@@ -20,7 +20,7 @@ class ZeusServiceProvider implements ServiceProviderInterface
             return $app['thrift.clients'];
         });
         Zeus::setTimer(function () use ($app) {
-            return $app['timer']['zeus'];
+            return $app['timer.collections']['zeus'];
         });
         Zeus::setCacher(function () use ($app) {
             return $app['cacher'];
