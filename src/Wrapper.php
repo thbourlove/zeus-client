@@ -1,6 +1,7 @@
 <?php
 namespace Eleme\Zeus;
 
+use Closure;
 use Thrift\Exception\TException;
 
 class Wrapper
@@ -47,18 +48,36 @@ class Wrapper
 
         $results = [];
         if ($key) {
-            if ($unique) {
+            $results = $this->formatResult($tResults, $key, $unique);
+        } else {
+            foreach ($tResults as $tResult) {
+                $results[] = new $this->class($tResult);
+            }
+        }
+        return $results;
+    }
+
+    private function formatResult($tResults, $key, $unique)
+    {
+        if ($unique) {
+            if ($key instanceof Closure) {
+                foreach ($tResults as $tResult) {
+                    $results[$key($tResult)] = new $this->class($tResult);
+                }
+            } else {
                 foreach ($tResults as $tResult) {
                     $results[$tResult->$key] = new $this->class($tResult);
+                }
+            }
+        } else {
+            if ($key instanceof Closure) {
+                foreach ($tResults as $tResult) {
+                    $results[$key($tResult)][] = new $this->class($tResult);
                 }
             } else {
                 foreach ($tResults as $tResult) {
                     $results[$tResult->$key][] = new $this->class($tResult);
                 }
-            }
-        } else {
-            foreach ($tResults as $tResult) {
-                $results[] = new $this->class($tResult);
             }
         }
         return $results;
