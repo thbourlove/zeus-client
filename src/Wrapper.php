@@ -198,8 +198,9 @@ class Wrapper
 
     private function defaultHandler($default)
     {
-        return function (TException $e) use ($default) {
-            if (get_class($e) === strtoupper($this->service).'\\'.strtoupper($this->service).'UserException') {
+        $service = $this->service;
+        return function (TException $e) use ($default, $service) {
+            if (get_class($e) === strtoupper($service).'\\'.strtoupper($service).'UserException') {
                 return $default;
             } else {
                 throw $e;
