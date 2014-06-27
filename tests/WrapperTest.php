@@ -114,8 +114,9 @@ class WrapperTest extends PHPUnit_Framework_TestCase
                 $that->assertInstanceOf('Eleme\Zeus\NullValue', $result);
             });
         $options = array('cacher' => $this->cacher);
-        $wrapper = function () use ($options) {
-            return $this->wrapper($options);
+        $that = $this;
+        $wrapper = function () use ($options, $that) {
+            return $that->wrapper($options);
         };
         $this->assertEquals('cached result', $wrapper()->call('foo')->cache(1)->run());
         $this->assertNull($wrapper()->call('foo')->cache(1)->run());
