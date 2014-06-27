@@ -19,7 +19,7 @@ class Wrapper
 
     private $method = '';
     private $handler = null;
-    private $args = [];
+    private $args = array();
     private $ttl = 0;
 
     public function __construct($clients, $service, array $options = array())
