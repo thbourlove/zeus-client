@@ -13,5 +13,3 @@ php zeus client
     "eleme/zeus-client": "~0.1"
 }
 ```
-
-## Example:
