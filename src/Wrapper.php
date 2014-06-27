@@ -2,6 +2,8 @@
 namespace Eleme\Zeus;
 
 use Closure;
+use Exception;
+use RuntimeException;
 use Thrift\Exception\TException;
 
 class Wrapper
@@ -160,7 +162,7 @@ class Wrapper
         $client = $this->clients[$this->service];
 
         if (!is_callable(array($client, $this->method))) {
-            throw new \Exception("Method ".get_class($client).'::'.$this->method.' is not callable!');
+            throw new RuntimeException("Method ".get_class($client).'::'.$this->method.' is not callable!');
         }
 
         if ($timer = $this->timer) {
@@ -184,7 +186,7 @@ class Wrapper
         if ($result instanceof NullValue) {
             return null;
         }
-        if ($result instanceof \Exception) {
+        if ($result instanceof Exception) {
             throw $result;
         }
         return $result;
