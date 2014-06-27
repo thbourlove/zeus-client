@@ -115,14 +115,11 @@ class WrapperTest extends PHPUnit_Framework_TestCase
             });
         $options = array('cacher' => $this->cacher);
         $that = $this;
-        $wrapper = function () use ($options, $that) {
-            return $that->wrapper($options);
-        };
-        $this->assertEquals('cached result', $wrapper()->call('foo')->cache(1)->run());
-        $this->assertNull($wrapper()->call('foo')->cache(1)->run());
-        $this->assertEquals('result', $wrapper()->call('foo')->cache(1)->run());
-        $this->assertNull($wrapper()->call('foo')->cache(10)->run());
-        $this->assertEquals('no cache', $wrapper()->call('foo')->run());
+        $this->assertEquals('cached result', $this->wrapper($options)->call('foo')->cache(1)->run());
+        $this->assertNull($this->wrapper($options)->call('foo')->cache(1)->run());
+        $this->assertEquals('result', $this->wrapper($options)->call('foo')->cache(1)->run());
+        $this->assertNull($this->wrapper($options)->call('foo')->cache(10)->run());
+        $this->assertEquals('no cache', $this->wrapper($options)->call('foo')->run());
     }
 
     /**
