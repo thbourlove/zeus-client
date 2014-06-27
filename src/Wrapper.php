@@ -161,10 +161,6 @@ class Wrapper
     {
         $client = $this->clients[$this->service];
 
-        if (!is_callable(array($client, $this->method))) {
-            throw new RuntimeException("Method ".get_class($client).'::'.$this->method.' is not callable!');
-        }
-
         if ($timer = $this->timer) {
             $name = "{$this->service}.{$this->method}";
             $timer->start($name);
