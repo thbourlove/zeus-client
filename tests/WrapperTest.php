@@ -13,6 +13,11 @@ use Eleme\Zeus\NullValue;
 class WrapperTest extends PHPUnit_Framework_TestCase
 {
     private $client = null;
+    private $server = '';
+    private $clients = array();
+    private $timer = null;
+    private $logger = null;
+    private $cacher = null;
 
     public function setUp()
     {
@@ -33,7 +38,7 @@ class WrapperTest extends PHPUnit_Framework_TestCase
     public function testNotCallableMethod()
     {
         $wrapper = $this->wrapper();
-        $result = $wrapper->call('not_exists')->with('args')->run();
+        $wrapper->call('not_exists')->with('args')->run();
     }
 
     public function testFluentInterface()
@@ -47,27 +52,29 @@ class WrapperTest extends PHPUnit_Framework_TestCase
     public function testTimer()
     {
         $that = $this;
+        $server = $this->server;
         $this->timer
             ->shouldReceive('start')
-            ->andReturnUsing(function ($name) use ($that) {
-                $that->assertEquals("{$that->server}.api", $name);
+            ->andReturnUsing(function ($name) use ($that, $server) {
+                $that->assertEquals("{$server}.api", $name);
             });
         $this->timer
             ->shouldReceive('stop')
-            ->andReturnUsing(function ($name) use ($that) {
-                $that->assertEquals("{$that->server}.api", $name);
+            ->andReturnUsing(function ($name) use ($that, $server) {
+                $that->assertEquals("{$server}.api", $name);
             });
         $wrapper = $this->wrapper(array('timer' => $this->timer));
-        $result = $wrapper->call('api')->with('args')->run();
+        $wrapper->call('api')->with('args')->run();
     }
 
     public function testLogWithoutPassword()
     {
         $that = $this;
+        $server = $this->server;
         $this->logger
             ->shouldReceive('info')
-            ->andReturnUsing(function ($message, $content) use ($that) {
-                $that->assertEquals("{$that->server}::api", $message);
+            ->andReturnUsing(function ($message, $content) use ($that, $server) {
+                $that->assertEquals("{$server}::api", $message);
                 $that->assertEquals(array('username', 'password'), $content);
             })
             ->once();
@@ -78,10 +85,11 @@ class WrapperTest extends PHPUnit_Framework_TestCase
     public function testLogWithPassword()
     {
         $that = $this;
+        $server = $this->server;
         $this->logger
             ->shouldReceive('info')
-            ->andReturnUsing(function ($message, $content) use ($that) {
-                $that->assertEquals("{$that->server}::auth", $message);
+            ->andReturnUsing(function ($message, $content) use ($that, $server) {
+                $that->assertEquals("{$server}::auth", $message);
                 $that->assertEquals(array('username'), $content);
             })
             ->once();
@@ -127,7 +135,6 @@ class WrapperTest extends PHPUnit_Framework_TestCase
      */
     public function testCachedException()
     {
-        $that = $this;
         $this->cacher
             ->shouldReceive('get')
             ->andReturn(new RuntimeException);
@@ -138,7 +145,7 @@ class WrapperTest extends PHPUnit_Framework_TestCase
 
     public function testExecute()
     {
-        $wrapper = $this->wrapper($this->clients, $this->server);
+        $wrapper = $this->wrapper();
         $result = $wrapper->call('api')->execute();
         $this->assertTrue($result);
     }
@@ -150,7 +157,7 @@ class WrapperTest extends PHPUnit_Framework_TestCase
         $this->client
             ->shouldReceive('auth')
             ->andThrow(new TESTUserException);
-        $wrapper = $this->wrapper($this->clients, $this->server);
+        $wrapper = $this->wrapper();
         $result = $wrapper->call('auth')->execute(false);
         $this->assertFalse($result);
     }

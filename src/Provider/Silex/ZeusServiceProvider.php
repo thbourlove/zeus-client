@@ -9,7 +9,7 @@ class ZeusServiceProvider implements ServiceProviderInterface
 {
     public function register(Application $app)
     {
-        $app['zeus'] = $app->share(function ($app) {
+        $app['zeus'] = $app->share(function () {
             return new Zeus();
         });
         $app['zeus.authorizations'] = array();
