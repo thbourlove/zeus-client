@@ -61,6 +61,7 @@ class Wrapper
 
     private function formatResult($tResults, $key, $unique)
     {
+        $results = array();
         if ($unique) {
             if ($key instanceof Closure) {
                 foreach ($tResults as $tResult) {
