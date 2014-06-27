@@ -48,7 +48,7 @@ class Wrapper
             return $handler($e);
         }
 
-        $results = [];
+        $results = array();
         if ($key) {
             $results = $this->formatResult($tResults, $key, $unique);
         } else {
