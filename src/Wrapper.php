@@ -167,7 +167,12 @@ class Wrapper
             $timer->start($name);
         }
 
-        $result = call_user_func_array(array($client, $this->method), $this->args);
+        try {
+            $result = call_user_func_array(array($client, $this->method), $this->args);
+        } catch (Exception $e) {
+            $this->log($e);
+            throw $e;
+        }
 
         if ($timer) {
             $timer->stop($name);
@@ -214,7 +219,7 @@ class Wrapper
         return md5(sprintf('web.%s.%s.%s', $this->service, $this->method, json_encode($this->args)));
     }
 
-    private function log()
+    private function log($e = null)
     {
         if (!$this->logger) {
             return;
@@ -224,7 +229,11 @@ class Wrapper
         } else {
             $args = $this->args;
         }
-        $this->logger->info($this->service.'::'.$this->method, $args);
+        if ($e !== null) {
+            $this->logger->error($this->service.'::'.$this->method.' -> '.$e->getMessage(), $args);
+        } else {
+            $this->logger->info($this->service.'::'.$this->method, $args);
+        }
     }
 
     private function init(array $options)

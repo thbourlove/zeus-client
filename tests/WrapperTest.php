@@ -101,6 +101,28 @@ class WrapperTest extends PHPUnit_Framework_TestCase
         $wrapper->call('auth')->with('username', 'password')->run();
     }
 
+    /**
+     * @expectedException TEST\TESTUserException
+     */
+    public function testLogWithException()
+    {
+        require_once 'TESTUserException.php';
+        $that = $this;
+        $server = $this->server;
+        $this->logger
+            ->shouldReceive('error')
+            ->andReturnUsing(function ($message, $content) use ($that, $server) {
+                $that->assertEquals("{$server}::auth -> exception", $message);
+                $that->assertEquals(array('username', 'password'), $content);
+            })
+            ->once();
+        $this->client
+            ->shouldReceive('auth')
+            ->andThrow(new TESTUserException('exception'));
+        $wrapper = $this->wrapper(array('logger' => $this->logger));
+        $wrapper->call('auth')->with('username', 'password')->run();
+    }
+
     public function testCacher()
     {
         $that = $this;
