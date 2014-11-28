@@ -5,6 +5,7 @@ use Closure;
 use Exception;
 use RuntimeException;
 use Thrift\Exception\TException;
+use Eleme\Model\ElemeLogicException;
 
 class Wrapper
 {
@@ -189,7 +190,9 @@ class Wrapper
             return null;
         }
         if ($result instanceof Exception) {
-            throw $result;
+            $exception = new ElemeLogicException($result->getMessage(), $result->getCode());
+            $exception->setErrorName($result->error_name);
+            throw $exception;
         }
         return $result;
     }
