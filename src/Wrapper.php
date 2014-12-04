@@ -204,14 +204,18 @@ class Wrapper
 
     private function defaultHandler($default)
     {
-        $service = $this->service;
-        return function (TException $e) use ($default, $service) {
-            if (get_class($e) === strtoupper($service).'\\'.strtoupper($service).'UserException') {
+        return function (TException $e) use ($default) {
+            if ($this->isUserException($e)) {
                 return $default;
             } else {
                 throw $e;
             }
         };
+    }
+
+    private function isUserException($e)
+    {
+        return get_class($e) === strtoupper($this->service).'\\'.strtoupper($this->service).'UserException';
     }
 
     private function getCacheKey()
@@ -230,7 +234,11 @@ class Wrapper
             $args = $this->args;
         }
         if ($e !== null) {
-            $this->logger->error($this->service.'::'.$this->method.' -> '.$e->getMessage(), $args);
+            if ($this->isUserException($e)) {
+                $this->logger->warning($this->service.'::'.$this->method.' -> '.$e->getMessage(), $args);
+            } else {
+                $this->logger->error($this->service.'::'.$this->method.' -> '.$e->getMessage(), $args);
+            }
         } else {
             $this->logger->info($this->service.'::'.$this->method, $args);
         }
