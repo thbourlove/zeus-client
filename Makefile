@@ -9,5 +9,5 @@ cscope:
 test:
 	vendor/bin/phpunit --coverage-text
 
-build:
+install:
 	composer install
