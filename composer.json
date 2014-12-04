@@ -10,7 +10,7 @@
     ],
     "require": {
         "eleme/thrift-php": "~0.9",
-        "php": ">=5.3.3"
+        "php": ">=5.4.0"
     },
     "require-dev": {
         "silex/silex": "~1.1",
