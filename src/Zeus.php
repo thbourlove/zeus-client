@@ -10,6 +10,7 @@ class Zeus
     public static $timer = null;
     public static $logger = null;
     public static $authorizations = array();
+    public static $hosts = array();
 
     public static function factory($service, $class = null)
     {
@@ -78,5 +79,15 @@ class Zeus
             static::$clients = call_user_func(static::$clients);
         }
         return static::$clients;
+    }
+    
+    public static function setHosts(array $hosts)
+    {
+        static::$hosts = $hosts;
+    }
+
+    public static function getHosts()
+    {
+        return static::$hosts;
     }
 }

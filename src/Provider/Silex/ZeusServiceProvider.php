@@ -13,6 +13,7 @@ class ZeusServiceProvider implements ServiceProviderInterface
             return new Zeus();
         });
         $app['zeus.authorizations'] = array();
+        $app['zeus.hosts'] = array();
     }
 
     public function boot(Application $app)
@@ -30,5 +31,6 @@ class ZeusServiceProvider implements ServiceProviderInterface
             return $app['cacher'];
         });
         Zeus::setAuthorizations($app['zeus.authorizations']);
+        Zeus::setHosts($app['zeus.hosts']);
     }
 }
